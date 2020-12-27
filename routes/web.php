@@ -16,3 +16,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+// Route::get('hello', function(){
+//     return '<html><body><h1>this is sample page</h1></body></html>';
+// });
+
+Route::get('hello/', 'App\Http\Controllers\HelloController@index');
+Route::get('hello/other', 'App\Http\Controllers\HelloController@other');
+
