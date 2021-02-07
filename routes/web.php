@@ -17,11 +17,21 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('hello', 'App\Http\Controllers\HelloController@index');
+Route::post('hello', 'App\Http\Controllers\HelloController@post');
 
-// Route::get('hello', function(){
-//     return '<html><body><h1>this is sample page</h1></body></html>';
-// });
+Route::get('hello/add', 'App\Http\Controllers\HelloController@add');
+Route::post('hello/add', 'App\Http\Controllers\HelloController@create');
 
-Route::get('hello/', 'App\Http\Controllers\HelloController@index');
-Route::get('hello/other', 'App\Http\Controllers\HelloController@other');
+Route::get('hello/edit', 'App\Http\Controllers\HelloController@edit');
+Route::post('hello/edit', 'App\Http\Controllers\HelloController@update');
 
+Route::get('hello/del', 'App\Http\Controllers\HelloController@del');
+Route::post('hello/del', 'App\Http\Controllers\HelloController@remove');
+
+Route::get('hello/show', 'App\Http\Controllers\HelloController@show');
+
+Route::get('person', 'App\Http\Controllers\PersonController@index');
+
+Route::get('person/find', 'App\Http\Controllers\PersonController@find');
+Route::post('person/find', 'App\Http\Controllers\PersonController@search');

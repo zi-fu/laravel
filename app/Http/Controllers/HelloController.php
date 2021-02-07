@@ -3,46 +3,109 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-
-global $head, $style, $body, $end;
-$head = '<html><head>';
-$style = <<<EOF
-<style>
-body {font-size:16px; color:#999;}
-h1 {font-size:100px; text-aligin:right; color:#eee; margin:-40px 0px -50px 0px; }
-</style>
-EOF;
-$body = '</head><body>';
-$end = '</body></html>';
-
-function tag($tag,$txt){
-    return "<{$tag}>" . $txt . "</{$tag}>";
-}
+use Illuminate\Http\Response;
+use Validator;
+use App\Http\Requests\HelloRequest;
+use Illuminate\Support\Facades\DB;
 
 class HelloController extends Controller
 {
-  
-    public function index() {
-        global $head, $style, $body, $end;
-
-        $html = $head .tag('title', 'Hello/Index') . $style . $body
-        . tag('h1', 'Index') . tag('p', 'this is Index page')
-        . '<a href="/hello/other">go to Other page</a>'
-        . $end;
-
-        return $html;
-   }
-   
-    public function Other() {
-        global $head, $style, $body, $end;
-
-        $html = $head .tag('title', 'Hello/Other') . $style . $body
-        . tag('h1', 'Other') . tag('p', 'this is Other page')
-        . '<a href="/hello/">go to Index page</a>'
-        . $end;
-
-        return $html;
+    public function index(Request $request)
+    {
+        $items = DB::table('people')->get();
+        return view('hello.index', ['items' => $items]);
+        // if (isset($request->id))
+        // {
+        //     $param = ['id' => $request->id];
+        //     $items = DB::select('select * from people where id = :id', $param);
+        // } else {
+        //     $items = DB::select('select * from people');
+        // }
     }
 
+    public function post(Request $request)
+    {
+        $validate_rule = [
+            'msg' => 'required',
+        ];
+        $this->validate($request, $validate_rule);
+        $msg = $request->msg;
+        $response = response()->view('hello.index',['msg'=>'「' . $msg . '」をクッキーに保存しました。']);
+        $response->cookie('msg', $msg, 100);
+        return $response;
+        // return view('hello.index', ['msg'=>'正しく入力されました！']);
+    }
+
+    public function add(Request $request)
+    {
+        return view('hello.add');
+
+    }
+
+    public function create(Request $request)
+    {
+        $param = [
+            'name' => $request->name,
+            'mail' => $request->mail,
+            'age' => $request->age,
+        ];
+        DB::table('people')->insert($param);
+        // DB::insert('insert into people (name, mail, age) values (:name, :mail, :age)', $param);
+        return redirect('/hello');
+    }
+
+    public function edit(Request $request)
+    {
+        $item = DB::table('people')
+                    ->where('id', $request->id)
+                    ->first();
+        // $param = ['id' => $request->id];
+        // $item = DB::select('select * from people where id = :id', $param);
+        return view('hello.edit', ['form' => $item]);
+    }
+
+    public function update(Request $request)
+    {
+        $param = [
+            'id' => $request->id,
+            'name' => $request->name,
+            'mail' => $request->mail,
+            'age' => $request->age,
+        ];
+        DB::table('people')
+            ->where('id', $request->id)
+            ->update($param);
+        // DB::update('update people set name =:name, mail = :mail, age = :age where id = :id', $param);
+        return redirect('/hello');
+    }
+
+    public function del(Request $request)
+    {
+        $item = DB::table('people')
+                    ->where('id', $request->id)
+                    ->first();
+        // $param = ['id' => $request->id];
+        // $item = DB::select('select * from people where id = :id', $param);
+        return view('hello.del', ['form' => $item]);
+    }
+
+    public function remove(Request $request)
+    {
+        DB::table('people')
+        ->where('id', $request->id)
+        ->delete();
+        // $param = ['id' => $request->id];
+        // DB::delete('delete from people where id = :id', $param);
+        return redirect('/hello');
+    }
+
+    public function show(Request $request)
+    {
+        $page = $request->page;
+        $items = DB::table('people')
+                    ->offset($page * 3)
+                    ->limit(3)
+                    ->get();
+        return view('hello.show', ['items' => $items]);
+    }
 }
