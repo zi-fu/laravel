@@ -14,13 +14,6 @@ class HelloController extends Controller
     {
         $items = DB::table('people')->get();
         return view('hello.index', ['items' => $items]);
-        // if (isset($request->id))
-        // {
-        //     $param = ['id' => $request->id];
-        //     $items = DB::select('select * from people where id = :id', $param);
-        // } else {
-        //     $items = DB::select('select * from people');
-        // }
     }
 
     public function post(Request $request)
@@ -33,13 +26,11 @@ class HelloController extends Controller
         $response = response()->view('hello.index',['msg'=>'「' . $msg . '」をクッキーに保存しました。']);
         $response->cookie('msg', $msg, 100);
         return $response;
-        // return view('hello.index', ['msg'=>'正しく入力されました！']);
     }
 
     public function add(Request $request)
     {
         return view('hello.add');
-
     }
 
     public function create(Request $request)
@@ -50,7 +41,6 @@ class HelloController extends Controller
             'age' => $request->age,
         ];
         DB::table('people')->insert($param);
-        // DB::insert('insert into people (name, mail, age) values (:name, :mail, :age)', $param);
         return redirect('/hello');
     }
 
@@ -59,8 +49,6 @@ class HelloController extends Controller
         $item = DB::table('people')
                     ->where('id', $request->id)
                     ->first();
-        // $param = ['id' => $request->id];
-        // $item = DB::select('select * from people where id = :id', $param);
         return view('hello.edit', ['form' => $item]);
     }
 
@@ -75,7 +63,6 @@ class HelloController extends Controller
         DB::table('people')
             ->where('id', $request->id)
             ->update($param);
-        // DB::update('update people set name =:name, mail = :mail, age = :age where id = :id', $param);
         return redirect('/hello');
     }
 
@@ -84,8 +71,6 @@ class HelloController extends Controller
         $item = DB::table('people')
                     ->where('id', $request->id)
                     ->first();
-        // $param = ['id' => $request->id];
-        // $item = DB::select('select * from people where id = :id', $param);
         return view('hello.del', ['form' => $item]);
     }
 
@@ -94,8 +79,6 @@ class HelloController extends Controller
         DB::table('people')
         ->where('id', $request->id)
         ->delete();
-        // $param = ['id' => $request->id];
-        // DB::delete('delete from people where id = :id', $param);
         return redirect('/hello');
     }
 
